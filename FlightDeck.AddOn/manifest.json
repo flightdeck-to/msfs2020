@@ -1,0 +1,39 @@
+﻿{
+  "Actions": [
+    {
+      "Icon": "Images/toggleIcon",
+      "Name": "Toggle Button",
+      "States": [
+        {
+          "Image": "Images/button",
+          "ShowTitle": false
+        }
+      ],
+      "SupportedInMultiActions": true,
+      "PropertyInspectorPath": "PropertyInspector/GenericToggle.html",
+      "Tooltip": "Use the SimConnect variables to define the toggle button",
+      "UUID": "to.flightdeck.msfs2020.generic.toggle"
+    }
+  ],
+  "Profiles": [
+  ],
+  "SDKVersion": 2,
+  "Author": "Pieter van 't Hof and Nguyen Quy Hy and rmroc451 and FlightDeck.to",
+  "CodePath": "FlightDeck.AddOn.exe",
+  "Category": "FlightDeck",
+  "CategoryIcon": "Images/categoryIcon",
+  "Description": "Interact with your flight simulator right from your Stream Deck",
+  "Name": "Flight Deck",
+  "Icon": "Images/aircraft",
+  "URL": "https://www.flightdeck.to",
+  "Version": "0.7",
+  "OS": [
+    {
+      "Platform": "windows",
+      "MinimumVersion": "10"
+    }
+  ],
+  "Software": {
+    "MinimumVersion": "4.1"
+  }
+}

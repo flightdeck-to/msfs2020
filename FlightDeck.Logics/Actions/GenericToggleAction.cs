@@ -1,0 +1,172 @@
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using FlightDeck.Core;
+using FlightDeck.Logics.Evaluators;
+using Microsoft.Extensions.Logging;
+using Newtonsoft.Json.Linq;
+using SharpDeck;
+using SharpDeck.Events.Received;
+using SharpDeck.Manifest;
+
+namespace FlightDeck.Logics.Actions
+{
+    public class GenericToggleSettings
+    {
+        public string Header { get; set; }
+        public string ToggleValue { get; set; }
+        public string FeedbackValue { get; set; }
+        public string DisplayValue { get; set; }
+        public string ImageOn { get; set; }
+        public string ImageOff { get; set; }
+    }
+
+    [StreamDeckAction("to.flightdeck.msfs2020.generic.toggle")]
+    public class GenericToggleAction : StreamDeckAction<GenericToggleSettings>
+    {
+        private readonly ILogger<ApToggleAction> logger;
+        private readonly IFlightConnector flightConnector;
+        private readonly IImageLogic imageLogic;
+        private readonly IEvaluator evaluator;
+        private readonly EnumConverter enumConverter;
+
+        private GenericToggleSettings settings = null;
+
+        private TOGGLE_EVENT? toggleEvent = null;
+        private IEnumerable<TOGGLE_VALUE> feedbackVariables = new List<TOGGLE_VALUE>();
+        private IExpression expression;
+        private TOGGLE_VALUE? displayValue = null;
+
+        private string currentValue = "";
+        private bool currentStatus = false;
+
+        public GenericToggleAction(ILogger<ApToggleAction> logger, IFlightConnector flightConnector, IImageLogic imageLogic,
+            IEvaluator evaluator, EnumConverter enumConverter)
+        {
+            this.logger = logger;
+            this.flightConnector = flightConnector;
+            this.imageLogic = imageLogic;
+            this.evaluator = evaluator;
+            this.enumConverter = enumConverter;
+        }
+
+        protected override async Task OnWillAppear(ActionEventArgs<AppearancePayload> args)
+        {
+            var toggleSettings = args.Payload.GetSettings<GenericToggleSettings>();
+            InitializeSettings(toggleSettings);
+
+            flightConnector.GenericValuesUpdated += FlightConnector_GenericValuesUpdated;
+
+            RegisterValues();
+
+            await UpdateImage();
+        }
+
+        private void InitializeSettings(GenericToggleSettings genericSettings)
+        {
+            this.settings = genericSettings;
+
+            var newToggleEvent = enumConverter.GetEventEnum(genericSettings.ToggleValue);
+            var (newFeedbackVariables, newExpression) = evaluator.Parse(genericSettings.FeedbackValue);
+            var newDisplayValue = enumConverter.GetVariableEnum(genericSettings.DisplayValue);
+
+            var toggleValues = newFeedbackVariables.ToList();
+            if (!toggleValues.SequenceEqual(feedbackVariables) || newDisplayValue != displayValue)
+            {
+                DeRegisterValues();
+            }
+
+            toggleEvent = newToggleEvent;
+            feedbackVariables = toggleValues;
+            expression = newExpression;
+            displayValue = newDisplayValue;
+
+            RegisterValues();
+        }
+
+        private async void FlightConnector_GenericValuesUpdated(object sender, ToggleValueUpdatedEventArgs e)
+        {
+            if (StreamDeck == null) return;
+
+            var newStatus = expression != null && evaluator.Evaluate(e.GenericValueStatus, expression);
+            var isUpdated = newStatus != currentStatus;
+            currentStatus = newStatus;
+
+            if (displayValue.HasValue && e.GenericValueStatus.ContainsKey(displayValue.Value))
+            {
+                var newValue = e.GenericValueStatus[displayValue.Value];
+                isUpdated |= newValue != currentValue;
+                currentValue = newValue;
+            }
+
+            if (isUpdated)
+            {
+                await UpdateImage();
+            }
+        }
+
+        protected override Task OnWillDisappear(ActionEventArgs<AppearancePayload> args)
+        {
+            flightConnector.GenericValuesUpdated -= FlightConnector_GenericValuesUpdated;
+            DeRegisterValues();
+            return Task.CompletedTask;
+        }
+
+        protected override async Task OnSendToPlugin(ActionEventArgs<JObject> args)
+        {
+            InitializeSettings(args.Payload.ToObject<GenericToggleSettings>());
+            await UpdateImage();
+        }
+
+        private void RegisterValues()
+        {
+            if (toggleEvent.HasValue)
+            {
+                flightConnector.RegisterToggleEvent(toggleEvent.Value);
+            }
+
+            foreach (var feedbackVariable in feedbackVariables)
+            {
+                flightConnector.RegisterSimValue(feedbackVariable);
+            }
+
+            if (displayValue.HasValue)
+            {
+                flightConnector.RegisterSimValue(displayValue.Value);
+            }
+        }
+
+        private void DeRegisterValues()
+        {
+            foreach (var feedbackVariable in feedbackVariables)
+            {
+                flightConnector.DeRegisterSimValue(feedbackVariable);
+            }
+
+            if (displayValue.HasValue)
+            {
+                flightConnector.DeRegisterSimValue(displayValue.Value);
+            }
+
+            currentValue = null;
+        }
+
+        protected override Task OnKeyDown(ActionEventArgs<KeyPayload> args)
+        {
+            if (toggleEvent.HasValue)
+            {
+                flightConnector.Toggle(toggleEvent.Value);
+            }
+
+            return Task.CompletedTask;
+        }
+
+        private async Task UpdateImage()
+        {
+            if (settings != null)
+            {
+                await SetImageAsync(imageLogic.GetImage(settings.Header, currentStatus, currentValue, settings.ImageOn, settings.ImageOff));
+            }
+        }
+    }
+}

@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="SharpDeck" Version="5.0.2" />
+    <PackageReference Include="SixLabors.ImageSharp.Drawing" Version="1.0.0-beta0010" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\FlightDeck.Core\FlightDeck.Core.csproj" />
+  </ItemGroup>
+
+</Project>
