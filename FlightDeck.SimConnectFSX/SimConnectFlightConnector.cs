@@ -1,13 +1,13 @@
-﻿using FlightDeck.Logics;
-using Microsoft.Extensions.Logging;
-using Microsoft.FlightSimulator.SimConnect;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 using FlightDeck.Core;
+using FlightDeck.Logics;
+using Microsoft.Extensions.Logging;
+using Microsoft.FlightSimulator.SimConnect;
 
 namespace FlightDeck.SimConnectFSX
 {
@@ -21,9 +21,9 @@ namespace FlightDeck.SimConnectFSX
         public event EventHandler Closed;
 
         private readonly List<SET_EVENT> setEvents = new List<SET_EVENT>();
-
         private readonly List<TOGGLE_EVENT> genericEvents = new List<TOGGLE_EVENT>();
         private readonly HashSet<TOGGLE_VALUE> genericValues = new HashSet<TOGGLE_VALUE>();
+
         private readonly EventValueLibrary eventLib = new EventValueLibrary();
 
         private readonly object lockLists = new object();
@@ -79,7 +79,12 @@ namespace FlightDeck.SimConnectFSX
         // Set up the SimConnect event handlers
         public void Initialize(IntPtr Handle)
         {
-            simconnect = new SimConnect("FlightDeck", Handle, WM_USER_SIMCONNECT, null, 0);
+            if (simconnect != null)
+            {
+                logger.LogWarning("Initialization is already done. Cancelled this request.");
+                return;
+            }
+            simconnect = new SimConnect("Flight Tracker Stream Deck", Handle, WM_USER_SIMCONNECT, null, 0);
 
             // listen to connect and quit msgs
             simconnect.OnRecvOpen += new SimConnect.RecvOpenEventHandler(Simconnect_OnRecvOpen);
@@ -91,26 +96,32 @@ namespace FlightDeck.SimConnectFSX
             simconnect.OnRecvSimobjectDataBytype += Simconnect_OnRecvSimobjectDataBytypeAsync;
             RegisterFlightStatusDefinition();
             RegisterGenericValues(true);
+            RegisterGenericEvents();
 
             simconnect.OnRecvSystemState += Simconnect_OnRecvSystemState;
 
-            //// TODO weghalen?
-            //simconnect.MapClientEventToSimEvent(EVENTS.AUTOPILOT_ON, "AUTOPILOT_ON");
-            //simconnect.MapClientEventToSimEvent(EVENTS.AUTOPILOT_OFF, "AUTOPILOT_OFF");
-            //simconnect.MapClientEventToSimEvent(EVENTS.AUTOPILOT_TOGGLE, "AP_MASTER");
-            //simconnect.MapClientEventToSimEvent(EVENTS.AP_HDG_TOGGLE, "AP_PANEL_HEADING_HOLD");
-            //simconnect.MapClientEventToSimEvent(EVENTS.AP_NAV_TOGGLE, "AP_NAV1_HOLD");
-            //simconnect.MapClientEventToSimEvent(EVENTS.AP_APR_TOGGLE, "AP_APR_HOLD");
-            //simconnect.MapClientEventToSimEvent(EVENTS.AP_ALT_TOGGLE, "AP_PANEL_ALTITUDE_HOLD");
+            simconnect.MapClientEventToSimEvent(EVENTS.AUTOPILOT_ON, "AUTOPILOT_ON");
+            simconnect.MapClientEventToSimEvent(EVENTS.AUTOPILOT_OFF, "AUTOPILOT_OFF");
+            simconnect.MapClientEventToSimEvent(EVENTS.AUTOPILOT_TOGGLE, "AP_MASTER");
+            simconnect.MapClientEventToSimEvent(EVENTS.AP_HDG_TOGGLE, "AP_PANEL_HEADING_HOLD");
+            simconnect.MapClientEventToSimEvent(EVENTS.AP_NAV_TOGGLE, "AP_NAV1_HOLD");
+            simconnect.MapClientEventToSimEvent(EVENTS.AP_APR_TOGGLE, "AP_APR_HOLD");
+            simconnect.MapClientEventToSimEvent(EVENTS.AP_ALT_TOGGLE, "AP_PANEL_ALTITUDE_HOLD");
+            simconnect.MapClientEventToSimEvent(EVENTS.AP_VS_TOGGLE, "AP_VS_HOLD");
 
-            //simconnect.MapClientEventToSimEvent(EVENTS.AP_HDG_SET, "HEADING_BUG_SET");
-            //simconnect.MapClientEventToSimEvent(EVENTS.AP_HDG_INC, "HEADING_BUG_INC");
-            //simconnect.MapClientEventToSimEvent(EVENTS.AP_HDG_DEC, "HEADING_BUG_DEC");
+            simconnect.MapClientEventToSimEvent(EVENTS.AP_HDG_SET, "HEADING_BUG_SET");
+            simconnect.MapClientEventToSimEvent(EVENTS.AP_HDG_INC, "HEADING_BUG_INC");
+            simconnect.MapClientEventToSimEvent(EVENTS.AP_HDG_DEC, "HEADING_BUG_DEC");
 
-            //simconnect.MapClientEventToSimEvent(EVENTS.AP_ALT_SET, "AP_ALT_VAR_SET_ENGLISH");
-            //simconnect.MapClientEventToSimEvent(EVENTS.AP_ALT_INC, "AP_ALT_VAR_INC");
-            //simconnect.MapClientEventToSimEvent(EVENTS.AP_ALT_DEC, "AP_ALT_VAR_DEC");
-            //simconnect.MapClientEventToSimEvent(EVENTS.AVIONICS_TOGGLE, "AVIONICS_MASTER_SET");
+            simconnect.MapClientEventToSimEvent(EVENTS.AP_ALT_SET, "AP_ALT_VAR_SET_ENGLISH");
+            simconnect.MapClientEventToSimEvent(EVENTS.AP_ALT_INC, "AP_ALT_VAR_INC");
+            simconnect.MapClientEventToSimEvent(EVENTS.AP_ALT_DEC, "AP_ALT_VAR_DEC");
+
+            simconnect.MapClientEventToSimEvent(EVENTS.AP_VS_SET, "AP_VS_VAR_SET_ENGLISH");
+            simconnect.MapClientEventToSimEvent(EVENTS.AP_VS_INC, "AP_VS_VAR_INC");
+            simconnect.MapClientEventToSimEvent(EVENTS.AP_VS_DEC, "AP_VS_VAR_DEC");
+
+            simconnect.MapClientEventToSimEvent(EVENTS.AVIONICS_TOGGLE, "AVIONICS_MASTER_SET");
 
         }
 
@@ -154,6 +165,11 @@ namespace FlightDeck.SimConnectFSX
             SendCommand(EVENTS.AP_ALT_TOGGLE);
         }
 
+        public void ApVsToggle()
+        {
+            SendCommand(EVENTS.AP_VS_TOGGLE);
+        }
+
         public void ApHdgSet(uint heading)
         {
             SendCommand(EVENTS.AP_HDG_SET, heading);
@@ -182,6 +198,11 @@ namespace FlightDeck.SimConnectFSX
         public void ApAltDec()
         {
             SendCommand(EVENTS.AP_ALT_DEC);
+        }
+
+        public void ApVsSet(uint speed)
+        {
+            SendCommand(EVENTS.AP_VS_SET, speed);
         }
 
         public void AvMasterToggle(uint state)
@@ -229,6 +250,7 @@ namespace FlightDeck.SimConnectFSX
         {
             try
             {
+                logger.LogDebug("Trying to cancel request loop");
                 cts?.Cancel();
                 cts = null;
             }
@@ -238,12 +260,9 @@ namespace FlightDeck.SimConnectFSX
             }
             try
             {
-                if (simconnect != null)
-                {
-                    // Dispose serves the same purpose as SimConnect_Close()
-                    simconnect.Dispose();
-                    simconnect = null;
-                }
+                // Dispose serves the same purpose as SimConnect_Close()
+                simconnect?.Dispose();
+                simconnect = null;
             }
             catch (Exception ex)
             {
@@ -421,6 +440,19 @@ namespace FlightDeck.SimConnectFSX
                 0.0f,
                 SimConnect.SIMCONNECT_UNUSED);
 
+            simconnect.AddToDataDefinition(DEFINITIONS.FlightStatus,
+                "AUTOPILOT VERTICAL HOLD",
+                "number",
+                SIMCONNECT_DATATYPE.INT32,
+                0.0f,
+                SimConnect.SIMCONNECT_UNUSED);
+            simconnect.AddToDataDefinition(DEFINITIONS.FlightStatus,
+                "AUTOPILOT VERTICAL HOLD VAR",
+                "Feet per minute",
+                SIMCONNECT_DATATYPE.INT32,
+                0.0f,
+                SimConnect.SIMCONNECT_UNUSED);
+
             #endregion
 
             simconnect.AddToDataDefinition(DEFINITIONS.FlightStatus,
@@ -464,7 +496,7 @@ namespace FlightDeck.SimConnectFSX
 
                         if (flightStatus.HasValue)
                         {
-                            logger.LogDebug("Get Aircraft status");
+                            logger.LogTrace("Get Aircraft status");
                             AircraftStatusUpdated?.Invoke(this, new AircraftStatusUpdatedEventArgs(
                                 new AircraftStatus
                                 {
@@ -492,6 +524,8 @@ namespace FlightDeck.SimConnectFSX
                                     IsApAprOn = flightStatus.Value.IsApAprOn == 1,
                                     IsApAltOn = flightStatus.Value.IsApAltOn == 1,
                                     ApAltitude = flightStatus.Value.ApAlt,
+                                    IsApVsOn = flightStatus.Value.IsApVsOn == 1,
+                                    ApVs = flightStatus.Value.ApVs,
                                     Transponder = flightStatus.Value.Transponder.ToString().PadLeft(4, '0'),
                                     FreqencyCom1 = flightStatus.Value.Com1,
                                     FreqencyCom2 = flightStatus.Value.Com2,
@@ -583,8 +617,8 @@ namespace FlightDeck.SimConnectFSX
         void Simconnect_OnRecvQuit(SimConnect sender, SIMCONNECT_RECV data)
         {
             logger.LogInformation("Flight Simulator has exited");
-            Closed?.Invoke(this, new EventArgs());
             CloseConnection();
+            Closed?.Invoke(this, new EventArgs());
         }
 
         void Simconnect_OnRecvException(SimConnect sender, SIMCONNECT_RECV_EXCEPTION data)
@@ -613,10 +647,7 @@ namespace FlightDeck.SimConnectFSX
 
         public void RegisterToggleEvent(TOGGLE_EVENT toggleAction)
         {
-            if (simconnect == null)
-            {
-                return;
-            }
+            if (simconnect == null) return;
 
             if (genericEvents.Contains(toggleAction))
             {
@@ -647,7 +678,7 @@ namespace FlightDeck.SimConnectFSX
         {
             lock (lockLists)
             {
-                var isEmpty = genericValues.Count == 0;
+                bool isEmpty = genericValues.Count == 0;
 
                 if (genericValues.Add(simValue))
                 {
@@ -670,14 +701,12 @@ namespace FlightDeck.SimConnectFSX
         {
             lock (lockLists)
             {
-                var isEmpty = genericValues.Count == 0;
+                bool isEmpty = genericValues.Count == 0;
                 var changed = false;
-
                 foreach (var simValue in simValues)
                 {
                     changed |= genericValues.Add(simValue);
                 }
-
                 if (changed)
                 {
                     RegisterGenericValues(isEmpty);
@@ -698,7 +727,7 @@ namespace FlightDeck.SimConnectFSX
             }
         }
 
-        public void RegisterGenericValues(bool wasEmpty)
+        private void RegisterGenericValues(bool wasEmpty)
         {
             if (simconnect == null) return;
 
@@ -724,6 +753,23 @@ namespace FlightDeck.SimConnectFSX
             }
 
             simconnect.RegisterDataDefineStruct<GenericValuesStruct>(DEFINITIONS.GenericData);
+        }
+
+        private void RegisterGenericEvents()
+        {
+            if (simconnect == null) return;
+
+            foreach (var toggleAction in genericEvents)
+            {
+                logger.LogInformation("RegisterEvent {1}", toggleAction);
+                simconnect.MapClientEventToSimEvent(toggleAction, toggleAction.ToString());
+            }
+
+            foreach (var action in setEvents)
+            {
+                logger.LogInformation("RegisterEvent {action} {simConnectAction}", action, action.ToString());
+                simconnect.MapClientEventToSimEvent(action, action.ToString());
+            }
         }
 
         public void Toggle(TOGGLE_EVENT toggleAction)

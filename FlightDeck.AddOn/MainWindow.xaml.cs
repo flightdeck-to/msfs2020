@@ -72,7 +72,7 @@ namespace FlightDeck.AddOn
                 {
                     simConnect.Initialize(_handle);
                     myNotifyIcon.Icon = new Icon("Images/button_active@2x.ico");
-                    simConnect.Send("Connected to FlightDeck");
+                    //simConnect.Send("Connected to FlightDeck");
                     break;
                 }
                 catch (COMException)
