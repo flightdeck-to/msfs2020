@@ -6,7 +6,7 @@ namespace FlightDeck.Core
     {
         public TOGGLE_EVENT? GetEventEnum(string value)
         {
-            if (value != null && Enum.TryParse(value, true, out TOGGLE_EVENT result))
+            if (value != null && Enum.TryParse(value.Replace(":", "__").Replace(" ", "_"), true, out TOGGLE_EVENT result))
             {
                 return result;
             }
@@ -16,12 +16,25 @@ namespace FlightDeck.Core
 
         public TOGGLE_VALUE? GetVariableEnum(string value)
         {
-            if (value != null && Enum.TryParse(value.Replace(":", "__").Replace(" ", "_"), true, out TOGGLE_VALUE result))
+            if (value != null && !float.TryParse(value, out _) && Enum.TryParse(value.Replace(":", "__").Replace(" ", "_"), true, out TOGGLE_VALUE result))
             {
                 return result;
             }
 
             return null;
+        }
+
+        public (uint? number, TOGGLE_VALUE? variable) GetUIntOrVariable(string value)
+        {
+            if (uint.TryParse(value, out var result))
+            {
+                return (result, null);
+            }
+            else
+            {
+                var variable = GetVariableEnum(value);
+                return (null, variable);
+            }
         }
     }
 }

@@ -1,29 +1,29 @@
-﻿using System.Threading.Tasks;
-using SharpDeck;
+﻿using SharpDeck;
 using SharpDeck.Events.Received;
 using SharpDeck.Manifest;
+using System.Threading.Tasks;
 
 namespace FlightDeck.Logics.Actions
 {
     #region
 
-    [StreamDeckAction("tech.flighttracker.streamdeck.number.0")]
+    [StreamDeckAction("to.flightdeck.msfs2020.number.0")]
     public class Number0Action : NumberAction { public Number0Action(IImageLogic imageLogic) : base(imageLogic) { } }
-    [StreamDeckAction("tech.flighttracker.streamdeck.number.1")]
+    [StreamDeckAction("to.flightdeck.msfs2020.number.1")]
     public class Number1Action : NumberAction { public Number1Action(IImageLogic imageLogic) : base(imageLogic) { } }
-    [StreamDeckAction("tech.flighttracker.streamdeck.number.2")]
+    [StreamDeckAction("to.flightdeck.msfs2020.number.2")]
     public class Number2Action : NumberAction { public Number2Action(IImageLogic imageLogic) : base(imageLogic) { } }
-    [StreamDeckAction("tech.flighttracker.streamdeck.number.3")]
+    [StreamDeckAction("to.flightdeck.msfs2020.number.3")]
     public class Number3Action : NumberAction { public Number3Action(IImageLogic imageLogic) : base(imageLogic) { } }
-    [StreamDeckAction("tech.flighttracker.streamdeck.number.4")]
+    [StreamDeckAction("to.flightdeck.msfs2020.number.4")]
     public class Number4Action : NumberAction { public Number4Action(IImageLogic imageLogic) : base(imageLogic) { } }
-    [StreamDeckAction("tech.flighttracker.streamdeck.number.5")]
+    [StreamDeckAction("to.flightdeck.msfs2020.number.5")]
     public class Number5Action : NumberAction { public Number5Action(IImageLogic imageLogic) : base(imageLogic) { } }
-    [StreamDeckAction("tech.flighttracker.streamdeck.number.6")]
+    [StreamDeckAction("to.flightdeck.msfs2020.number.6")]
     public class Number6Action : NumberAction { public Number6Action(IImageLogic imageLogic) : base(imageLogic) { } }
-    [StreamDeckAction("tech.flighttracker.streamdeck.number.7")]
+    [StreamDeckAction("to.flightdeck.msfs2020.number.7")]
     public class Number7Action : NumberAction { public Number7Action(IImageLogic imageLogic) : base(imageLogic) { } }
-    [StreamDeckAction("tech.flighttracker.streamdeck.number.8")]
+    [StreamDeckAction("to.flightdeck.msfs2020.number.8")]
     public class Number8Action : NumberAction
     {
         public Number8Action(IImageLogic imageLogic) : base(imageLogic) { }
@@ -32,7 +32,7 @@ namespace FlightDeck.Logics.Actions
         {
             if (DeckLogic.NumpadParams?.Type == "XPDR")
             {
-                await SetImageAsync(null);
+                await SetImageSafeAsync(null);
             }
             else
             {
@@ -40,7 +40,7 @@ namespace FlightDeck.Logics.Actions
             }
         }
     }
-    [StreamDeckAction("tech.flighttracker.streamdeck.number.9")]
+    [StreamDeckAction("to.flightdeck.msfs2020.number.9")]
     public class Number9Action : NumberAction
     {
         public Number9Action(IImageLogic imageLogic) : base(imageLogic) { }
@@ -49,7 +49,7 @@ namespace FlightDeck.Logics.Actions
         {
             if (DeckLogic.NumpadParams?.Type == "XPDR")
             {
-                await SetImageAsync(null);
+                await SetImageSafeAsync(null);
             }
             else
             {
@@ -60,7 +60,7 @@ namespace FlightDeck.Logics.Actions
 
     #endregion
 
-    public class NumberAction : StreamDeckAction
+    public class NumberAction : BaseAction
     {
         private readonly IImageLogic imageLogic;
 
@@ -73,7 +73,8 @@ namespace FlightDeck.Logics.Actions
         {
             var tokens = args.Action.Split(".");
             var number = int.Parse(tokens[^1]);
-            await SetImageAsync(imageLogic.GetNumberImage(number));
+
+            await SetImageSafeAsync(imageLogic.GetNumberImage(number));
         }
 
         protected override Task OnKeyDown(ActionEventArgs<KeyPayload> args)

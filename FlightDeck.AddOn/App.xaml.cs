@@ -1,12 +1,11 @@
-﻿using System.IO;
-using System.Windows;
-using FlightDeck.Core;
+﻿using FlightDeck.Core;
 using FlightDeck.Logics;
-using FlightDeck.Logics.Evaluators;
 using FlightDeck.SimConnectFSX;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Serilog;
+using System.IO;
+using System.Windows;
 
 namespace FlightDeck.AddOn
 {
@@ -22,7 +21,6 @@ namespace FlightDeck.AddOn
 
         protected override void OnStartup(StartupEventArgs e)
         {
-
             var builder = new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory())
                 .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true);
@@ -43,8 +41,10 @@ namespace FlightDeck.AddOn
             Log.Logger = new LoggerConfiguration()
                 .MinimumLevel.Debug()
                 .WriteTo.Debug()
-                .MinimumLevel.Information()
-                .WriteTo.File("flightdeck.log", rollingInterval: RollingInterval.Day, retainedFileCountLimit: 3)
+                .WriteTo.Logger(config => config
+                    .MinimumLevel.Information()
+                    .WriteTo.File("FlightDeck.log", rollingInterval: RollingInterval.Day, retainedFileCountLimit: 3)
+                )
                 .CreateLogger();
 
             //services.AddOptions<AppSettings>().Bind(Configuration).ValidateDataAnnotations();
@@ -54,6 +54,7 @@ namespace FlightDeck.AddOn
                 configure.AddSerilog();
             });
 
+            services.AddSingleton<ThrottlingLogic>();
             services.AddSingleton<DeckLogic>();
             services.AddSingleton<IFlightConnector, SimConnectFlightConnector>();
             //services.AddSingleton(new UserPreferencesLoader("preferences.json"));

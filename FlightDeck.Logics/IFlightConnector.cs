@@ -1,6 +1,6 @@
-﻿using System;
+﻿using FlightDeck.Core;
+using System;
 using System.Collections.Generic;
-using FlightDeck.Core;
 
 namespace FlightDeck.Logics
 {
@@ -16,6 +16,8 @@ namespace FlightDeck.Logics
         void ApAprToggle();
         void ApAltToggle();
         void ApVsToggle();
+        void ApFlcOn();
+        void ApFlcOff();
 
         /// <param name="heading">In Degree</param>
         void ApHdgSet(uint heading);
@@ -30,19 +32,21 @@ namespace FlightDeck.Logics
         /// <param name="speed">In Feet per min</param>
         void ApVsSet(uint speed);
 
+        void ApAirSpeedSet(uint speed);
+        void ApAirSpeedInc();
+        void ApAirSpeedDec();
+        void QNHSet(uint qnh);
+        void QNHInc();
+        void QNHDec();
+
         void AvMasterToggle(uint state);
 
-        void Toggle(TOGGLE_EVENT toggleAction);
-        void Set(SET_EVENT setAction, uint data);
+        void Trigger(TOGGLE_EVENT setAction, uint data = 0);
 
         void RegisterToggleEvent(TOGGLE_EVENT toggleAction);
-        void RegisterSetEvent(SET_EVENT action);
 
-        void RegisterSimValue(TOGGLE_VALUE simValue);
-        void DeRegisterSimValue(TOGGLE_VALUE simValue);
-
-        void RegisterSimValues(params TOGGLE_VALUE[] simValues);
-        void DeRegisterSimValues(params TOGGLE_VALUE[] simValues);
+        void RegisterSimValues(params (TOGGLE_VALUE variables, string unit)[] simValues);
+        void DeRegisterSimValues(params (TOGGLE_VALUE variables, string unit)[] simValues);
     }
 
     public class AircraftStatusUpdatedEventArgs : EventArgs
@@ -57,12 +61,12 @@ namespace FlightDeck.Logics
 
     public class ToggleValueUpdatedEventArgs : EventArgs
     {
-        public ToggleValueUpdatedEventArgs(Dictionary<TOGGLE_VALUE, string> toggleValueStatus)
+        public ToggleValueUpdatedEventArgs(Dictionary<(TOGGLE_VALUE variable, string unit), double> genericValueStatus)
         {
-            GenericValueStatus = toggleValueStatus;
+            GenericValueStatus = genericValueStatus;
         }
 
-        public Dictionary<TOGGLE_VALUE, string> GenericValueStatus { get; }
+        public Dictionary<(TOGGLE_VALUE variable, string unit), double> GenericValueStatus { get; }
     }
 
     public class AircraftStatus
@@ -110,9 +114,21 @@ namespace FlightDeck.Logics
         public bool IsApVsOn { get; set; }
         public int ApVs { get; set; }
 
+        public bool IsApFlcOn { get; set; }
+        public int ApAirspeed { get; set; }
+
+        public int QNHMbar { get; set; }
+
         public string Transponder { get; set; }
         public int FreqencyCom1 { get; set; }
         public int FreqencyCom2 { get; set; }
         public bool IsAvMasterOn { get; set; }
+        public double Nav1OBS { get; set; }
+        public double Nav2OBS { get; set; }
+        public double ADFCard { get; set; }
+        public int ADFActiveFrequency1 { get; set; }
+        public int ADFStandbyFrequency1 { get; set; }
+        public int ADFActiveFrequency2 { get; set; }
+        public int ADFStandbyFrequency2 { get; set; }
     }
 }

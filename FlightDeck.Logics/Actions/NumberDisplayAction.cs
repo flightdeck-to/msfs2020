@@ -1,13 +1,13 @@
-﻿using System.Threading.Tasks;
-using System.Timers;
-using SharpDeck;
+﻿using SharpDeck;
 using SharpDeck.Events.Received;
 using SharpDeck.Manifest;
+using System.Threading.Tasks;
+using System.Timers;
 
 namespace FlightDeck.Logics.Actions
 {
-    [StreamDeckAction("tech.flighttracker.streamdeck.number.display")]
-    public class NumberDisplayAction : StreamDeckAction
+    [StreamDeckAction("to.flightdeck.msfs2020.number.display")]
+    public class NumberDisplayAction : BaseAction
     {
         private readonly Timer timer;
         private readonly IImageLogic imageLogic;
@@ -34,7 +34,7 @@ namespace FlightDeck.Logics.Actions
                     value = value.Insert(decIndex, ".");
                 }
 
-                await SetImageAsync(imageLogic.GetNavComImage(DeckLogic.NumpadParams.Type, true, "", value));
+                await SetImageSafeAsync(imageLogic.GetNavComImage(DeckLogic.NumpadParams.Type, true, "", value, imageOnFilePath: DeckLogic.NumpadParams.ImageBackgroundFilePath, imageOnBytes: DeckLogic.NumpadParams.ImageBackground_base64));
             }
         }
 

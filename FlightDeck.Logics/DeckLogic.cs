@@ -1,19 +1,22 @@
-﻿using System;
+﻿using Microsoft.Extensions.Logging;
+using SharpDeck;
+using SharpDeck.Events.Received;
+using System;
 using System.Reflection;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
-using SharpDeck;
 
 namespace FlightDeck.Logics
 {
     public class NumpadParams
     {
-        public NumpadParams(string type, string min, string max, string mask)
+        public NumpadParams(string type, string min, string max, string mask, string imageBackgroundFilePath, byte[] imageBackground_base64)
         {
             Type = type;
             MinPattern = min;
             MaxPattern = max;
             Mask = mask;
+            ImageBackgroundFilePath = imageBackgroundFilePath;
+            ImageBackground_base64 = imageBackground_base64;
         }
 
         public string Type { get; }
@@ -21,6 +24,8 @@ namespace FlightDeck.Logics
         public string MaxPattern { get; }
         public string Value { get; set; } = "";
         public string Mask { get; set; } = "xxx.xx";
+        public string ImageBackgroundFilePath { get; set; }
+        public byte[] ImageBackground_base64 { get; set; }
     }
 
     public class DeckLogic

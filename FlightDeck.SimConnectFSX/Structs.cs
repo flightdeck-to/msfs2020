@@ -1,4 +1,6 @@
-﻿using System.Runtime.InteropServices;
+﻿using Microsoft.FlightSimulator.SimConnect;
+using System;
+using System.Runtime.InteropServices;
 
 namespace FlightDeck.SimConnectFSX
 {
@@ -37,6 +39,8 @@ namespace FlightDeck.SimConnectFSX
         AP_APR_TOGGLE,
         AP_ALT_TOGGLE,
         AP_VS_TOGGLE,
+        AP_FLC_ON,
+        AP_FLC_OFF,
         AP_HDG_SET,
         AP_HDG_INC,
         AP_HDG_DEC,
@@ -46,7 +50,13 @@ namespace FlightDeck.SimConnectFSX
         AP_VS_SET,
         AP_VS_INC,
         AP_VS_DEC,
-        AVIONICS_TOGGLE
+        AP_AIRSPEED_SET,
+        AP_AIRSPEED_INC,
+        AP_AIRSPEED_DEC,
+        QNH_SET,
+        QNH_INC,
+        QNH_DEC,
+        AVIONICS_TOGGLE,
     }
 
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = 1)]
@@ -97,11 +107,22 @@ namespace FlightDeck.SimConnectFSX
         public int ApAlt;
         public int IsApVsOn;
         public int ApVs;
+        public int IsApFlcOn;
+        public int ApAirspeed;
+
+        public int QNHmbar;
 
         public int Transponder;
         public int Com1;
         public int Com2;
         public int AvMasterOn;
+        public double Nav1OBS;
+        public double Nav2OBS;
+        public double ADFCard;
+        public int ADFActive1;
+        public int ADFStandby1;
+        public int ADFActive2;
+        public int ADFStandby2;
     }
 
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = 1)]
@@ -113,17 +134,5 @@ namespace FlightDeck.SimConnectFSX
         {
             return Data[index];
         }
-    }
-
-    struct ValueEntry
-    {
-        public ValueEntry(string unit, short decimals)
-        {
-            Unit = unit;
-            Decimals = decimals;
-        }
-
-        public string Unit;
-        public short Decimals;
     }
 }

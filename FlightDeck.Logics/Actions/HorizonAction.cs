@@ -1,16 +1,16 @@
-﻿using System.Threading.Tasks;
-using FlightDeck.Core;
+﻿using FlightDeck.Core;
 using Microsoft.Extensions.Logging;
 using SharpDeck;
 using SharpDeck.Events.Received;
 using SharpDeck.Manifest;
+using System.Threading.Tasks;
 
 namespace FlightDeck.Logics.Actions
 {
-    [StreamDeckAction("tech.flighttracker.streamdeck.artificial.horizon")]
-    public class HorizonAction : StreamDeckAction
+    [StreamDeckAction("to.flightdeck.msfs2020.artificial.horizon")]
+    public class HorizonAction : BaseAction
     {
-        private readonly ILogger<ApToggleAction> logger;
+        private readonly ILogger<HorizonAction> logger;
         private readonly IFlightConnector flightConnector;
         private readonly IImageLogic imageLogic;
 
@@ -18,15 +18,11 @@ namespace FlightDeck.Logics.Actions
         private TOGGLE_VALUE pitchValue = TOGGLE_VALUE.PLANE_PITCH_DEGREES;
         private TOGGLE_VALUE headingValue = TOGGLE_VALUE.PLANE_HEADING_DEGREES_MAGNETIC;
 
-        private string lastRawHeading = "";
-        private string lastRawBank = "";
-        private string lastRawPitch = "";
+        private double currentHeadingValue = 0;
+        private double currentBankValue = 0;
+        private double currentPitchValue = 0;
 
-        private float currentHeadingValue = 0.0f;
-        private float currentBankValue = 0.0f;
-        private float currentPitchValue = 0.0f;
-
-        public HorizonAction(ILogger<ApToggleAction> logger, IFlightConnector flightConnector, IImageLogic imageLogic)
+        public HorizonAction(ILogger<HorizonAction> logger, IFlightConnector flightConnector, IImageLogic imageLogic)
         {
             this.logger = logger;
             this.flightConnector = flightConnector;
@@ -46,22 +42,19 @@ namespace FlightDeck.Logics.Actions
         {
             bool isUpdated = false;
 
-            if (e.GenericValueStatus.ContainsKey(bankValue) && lastRawBank != e.GenericValueStatus[bankValue])
+            if (e.GenericValueStatus.ContainsKey((bankValue, null)) && currentBankValue != e.GenericValueStatus[(bankValue, null)])
             {
-                lastRawBank = e.GenericValueStatus[bankValue];
-                float.TryParse(lastRawBank, out currentBankValue);
+                currentBankValue = e.GenericValueStatus[(bankValue, null)];
                 isUpdated = true;
             }
-            if (e.GenericValueStatus.ContainsKey(headingValue) && lastRawHeading != e.GenericValueStatus[headingValue])
+            if (e.GenericValueStatus.ContainsKey((headingValue, null)) && currentHeadingValue != e.GenericValueStatus[(headingValue, null)])
             {
-                lastRawHeading = e.GenericValueStatus[headingValue];
-                float.TryParse(lastRawHeading, out currentHeadingValue);
+                currentHeadingValue = e.GenericValueStatus[(headingValue, null)];
                 isUpdated = true;
             }
-            if (e.GenericValueStatus.ContainsKey(pitchValue) && lastRawPitch != e.GenericValueStatus[pitchValue])
+            if (e.GenericValueStatus.ContainsKey((pitchValue, null)) && currentPitchValue != e.GenericValueStatus[(pitchValue, null)])
             {
-                lastRawPitch = e.GenericValueStatus[pitchValue];
-                float.TryParse(lastRawPitch, out currentPitchValue);
+                currentPitchValue = e.GenericValueStatus[(pitchValue, null)];
                 isUpdated = true;
             }
 
@@ -80,14 +73,12 @@ namespace FlightDeck.Logics.Actions
 
         private void RegisterValues()
         {
-            flightConnector.RegisterSimValue(bankValue);
-            flightConnector.RegisterSimValue(pitchValue);
+            flightConnector.RegisterSimValues((bankValue, null), (pitchValue, null));
         }
 
         private void DeRegisterValues()
         {
-            flightConnector.DeRegisterSimValue(bankValue);
-            flightConnector.DeRegisterSimValue(pitchValue);
+            flightConnector.DeRegisterSimValues((bankValue, null), (pitchValue, null));
         }
 
         protected override Task OnKeyDown(ActionEventArgs<KeyPayload> args)
@@ -99,7 +90,7 @@ namespace FlightDeck.Logics.Actions
 
         private async Task UpdateImage()
         {
-            await SetImageAsync(imageLogic.GetHorizonImage(currentPitchValue, currentBankValue, currentHeadingValue));
+            await SetImageSafeAsync(imageLogic.GetHorizonImage(currentPitchValue, currentBankValue, currentHeadingValue));
         }
     }
 }

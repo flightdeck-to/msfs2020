@@ -1,8 +1,8 @@
-﻿using System;
+﻿using FlightDeck.Core;
+using System;
 using System.Collections.Generic;
-using FlightDeck.Core;
 
-namespace FlightDeck.Logics.Evaluators
+namespace FlightDeck.Logics
 {
     /// <summary>
     /// This evaluator assumes feedbackValue contains only a single SimConnect variable
@@ -33,13 +33,13 @@ namespace FlightDeck.Logics.Evaluators
             return (new List<TOGGLE_VALUE> { variable.Value }, new Expression(variable.Value));
         }
 
-        public bool Evaluate(Dictionary<TOGGLE_VALUE, string> values, IExpression expression)
+        public bool Evaluate(Dictionary<TOGGLE_VALUE, double> values, IExpression expression)
         {
             if (expression is Expression simpleExpression)
             {
                 if (values.ContainsKey(simpleExpression.Variable))
                 {
-                    return values[simpleExpression.Variable] != "0";
+                    return values[simpleExpression.Variable] != 0;
                 }
                 return false;
             }

@@ -1,20 +1,20 @@
-﻿using System;
-using System.Threading.Tasks;
-using SharpDeck;
+﻿using SharpDeck;
 using SharpDeck.Events.Received;
 using SharpDeck.Manifest;
+using System;
+using System.Threading.Tasks;
 
 namespace FlightDeck.Logics.Actions
 {
     #region Action Registration
 
-    [StreamDeckAction("tech.flighttracker.streamdeck.number.enter")]
+    [StreamDeckAction("to.flightdeck.msfs2020.number.enter")]
     public class NumberEnterAction : NumberFunctionAction { }
-    [StreamDeckAction("tech.flighttracker.streamdeck.number.backspace")]
+    [StreamDeckAction("to.flightdeck.msfs2020.number.backspace")]
     public class NumberBackspaceAction : NumberFunctionAction { }
-    [StreamDeckAction("tech.flighttracker.streamdeck.number.cancel")]
+    [StreamDeckAction("to.flightdeck.msfs2020.number.cancel")]
     public class NumberCancelAction : NumberFunctionAction { }
-    [StreamDeckAction("tech.flighttracker.streamdeck.number.transfer")]
+    [StreamDeckAction("to.flightdeck.msfs2020.number.transfer")]
     public class NumberTransferAction : NumberFunctionAction
     {
         protected override async Task OnWillAppear(ActionEventArgs<AppearancePayload> args)
@@ -41,21 +41,21 @@ namespace FlightDeck.Logics.Actions
                 var param = new RegistrationParameters(Environment.GetCommandLineArgs()[1..]);
                 switch (args.Action)
                 {
-                    case "tech.flighttracker.streamdeck.number.enter":
+                    case "to.flightdeck.msfs2020.number.enter":
                         if (DeckLogic.NumpadTcs != null)
                         {
                             DeckLogic.NumpadTcs.SetResult((DeckLogic.NumpadParams.Value, false));
                         }
                         await StreamDeck.SwitchToProfileAsync(param.PluginUUID, args.Device, null);
                         break;
-                    case "tech.flighttracker.streamdeck.number.cancel":
+                    case "to.flightdeck.msfs2020.number.cancel":
                         if (DeckLogic.NumpadTcs != null)
                         {
                             DeckLogic.NumpadTcs.SetResult((null, false));
                         }
                         await StreamDeck.SwitchToProfileAsync(param.PluginUUID, args.Device, null);
                         break;
-                    case "tech.flighttracker.streamdeck.number.transfer":
+                    case "to.flightdeck.msfs2020.number.transfer":
                         if (DeckLogic.NumpadParams.Type == "XPDR")
                         {
                             DeckLogic.NumpadParams.Value = "1200";
@@ -73,7 +73,7 @@ namespace FlightDeck.Logics.Actions
                         }
                         await StreamDeck.SwitchToProfileAsync(param.PluginUUID, args.Device, null);
                         break;
-                    case "tech.flighttracker.streamdeck.number.backspace":
+                    case "to.flightdeck.msfs2020.number.backspace":
                         if (DeckLogic.NumpadParams.Value.Length > 0)
                         {
                             DeckLogic.NumpadParams.Value = DeckLogic.NumpadParams.Value[..^1];
