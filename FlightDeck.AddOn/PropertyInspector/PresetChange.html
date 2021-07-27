@@ -1,0 +1,43 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Property Inspector</title>
+    <link rel="stylesheet" href="css/sdpi.css">
+</head>
+<body>
+    <div class="sdpi-wrapper">
+        <div class="sdpi-item" type="field">
+            <div class="sdpi-item-label">Function</div>
+            <select class="sdpi-item-value select" id="Type">
+                <option disabled selected>Select a function</option>
+                <option value="Heading">Heading</option>
+                <option value="Altitude">Altitude</option>
+                <option value="VerticalSpeed">Vertical Speed</option>
+                <option value="AirSpeed">Air Speed</option>
+                <option value="VerticalSpeedAirSpeed">Vertical Speed/Air Speed</option>
+                <option value="QNH">Altimeter (QNH/QFE)</option>
+                <option value="VOR1">VOR1</option>
+                <option value="VOR2">VOR2</option>
+                <option value="ADF">ADF</option>
+            </select>
+        </div>
+    </div>
+    <script src="common.js"></script>
+    <script language="JavaScript" type="text/javascript">
+        function loadSettings(settings) {
+            if (settings['Type']) {
+                Type.value = settings['Type'];
+            };
+        }
+
+        function handleItemChanged(control, value) {
+            settings[value.key] = value.value;
+
+            sendValueToPlugin(settings);
+            setSettings(settings);
+        }
+    </script>
+    <script src="init.js"></script>
+</body>
+</html>
