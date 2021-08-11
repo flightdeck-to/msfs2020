@@ -30,6 +30,14 @@ namespace FlightDeck.SimConnectFSX
 
     public enum EVENTS
     {
+        ASCRJ_FCP_WHEEL_SEL_INC,
+        ASCRJ_FCP_WHEEL_SEL_DEC,
+        ASCRJ_FCP_HDG_SEL_INC,
+        ASCRJ_FCP_HDG_SEL_DEC,
+        ASCRJ_FCP_ALT_SEL_INC,
+        ASCRJ_FCP_ALT_SEL_DEC,
+        ASCRJ_FCP_SPEED_SEL_INC,
+        ASCRJ_FCP_SPEED_SEL_DEC,
         MESSAGE_RECEIVED,
         AUTOPILOT_ON,
         AUTOPILOT_OFF,

@@ -368,7 +368,7 @@ namespace FlightDeck.Logics.Actions
                         break;
 
                     case PresetFunction.Heading:
-                        await SetImageSafeAsync(imageLogic.GetImage(settings.HideHeader ? "" : "HDG", currentStatus.IsApHdgOn, currentStatus.ApHeading.ToString(),
+                        await SetImageSafeAsync(imageLogic.GetImage(settings.HideHeader ? "" : "HDG", currentStatus.IsApHdgOn, string.Empty,
                             imageOnFilePath: settings.ImageOn, imageOnBytes: imageOnBytes,
                             imageOffFilePath: settings.ImageOff, imageOffBytes: imageOffBytes));
                         break;
@@ -380,20 +380,20 @@ namespace FlightDeck.Logics.Actions
                         break;
 
                     case PresetFunction.Altitude:
-                        await SetImageSafeAsync(imageLogic.GetImage(settings.HideHeader ? "" : "ALT", currentStatus.IsApAltOn, currentStatus.ApAltitude.ToString(),
+                        await SetImageSafeAsync(imageLogic.GetImage(settings.HideHeader ? "" : "ALT", currentStatus.IsApAltOn, string.Empty,
                             imageOnFilePath: settings.ImageOn, imageOnBytes: imageOnBytes,
                             imageOffFilePath: settings.ImageOff, imageOffBytes: imageOffBytes));
                         break;
 
                     case PresetFunction.VerticalSpeed:
-                        await SetImageSafeAsync(imageLogic.GetImage(settings.HideHeader ? "" : "VS", currentStatus.IsApVsOn, currentStatus.ApVs.ToString(),
+                        await SetImageSafeAsync(imageLogic.GetImage(settings.HideHeader ? "" : "VS", currentStatus.IsApVsOn, string.Empty,
                             imageOnFilePath: settings.ImageOn, imageOnBytes: imageOnBytes,
                             imageOffFilePath: settings.ImageOff, imageOffBytes: imageOffBytes));
                         break;
 
                     case PresetFunction.FLC:
                         await SetImageSafeAsync(imageLogic.GetImage(settings.HideHeader ? "" : "FLC", currentStatus.IsApFlcOn,
-                            value: currentStatus.IsApFlcOn ? currentStatus.ApAirspeed.ToString() : null,
+                            value: currentStatus.IsApFlcOn ? string.Empty : null,
                             imageOnFilePath: settings.ImageOn, imageOnBytes: imageOnBytes,
                             imageOffFilePath: settings.ImageOff, imageOffBytes: imageOffBytes));
                         break;

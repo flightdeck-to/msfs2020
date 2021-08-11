@@ -14,7 +14,7 @@
 
     /** let's see, if we have some settings */
     settings = getPropFromString(actionInfo, 'payload.settings');
-    loadSettings(settings)
+    loadSettings(settings);
     initPropertyInspector(5);
 
     // if connection was established, the websocket sends

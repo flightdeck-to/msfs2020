@@ -69,6 +69,7 @@ namespace FlightDeck.Logics.Actions
         private GenericToggleSettings settings = null;
 
         private TOGGLE_EVENT? toggleEvent = null;
+        private string toggleCommand = null;
         private uint? toggleEventDataUInt = null;
         private TOGGLE_VALUE? toggleEventDataVariable = null;
         private double? toggleEventDataVariableValue = null;
@@ -103,6 +104,8 @@ namespace FlightDeck.Logics.Actions
         protected override async Task OnWillAppear(ActionEventArgs<AppearancePayload> args)
         {
             var settings = args.Payload.GetSettings<GenericToggleSettings>();
+
+
             InitializeSettings(settings);
 
             flightConnector.GenericValuesUpdated += FlightConnector_GenericValuesUpdated;
@@ -401,6 +404,7 @@ namespace FlightDeck.Logics.Actions
 
         private void TriggerToggleEvent()
         {
+
             if (toggleEvent.HasValue)
             {
                 flightConnector.Trigger(toggleEvent.Value,
@@ -409,6 +413,8 @@ namespace FlightDeck.Logics.Actions
                         (toggleEventDataUInt ?? 0)
                 );
             }
+
+
         }
 
         private async Task UpdateImage()

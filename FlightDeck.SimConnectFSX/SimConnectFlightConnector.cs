@@ -200,11 +200,13 @@ namespace FlightDeck.SimConnectFSX
         public void ApHdgInc()
         {
             SendCommand(EVENTS.AP_HDG_INC);
+            SendGenericCommand(TOGGLE_EVENT.FD_ASCRJ_FCP_HDG_SEL_INC);
         }
 
         public void ApHdgDec()
         {
             SendCommand(EVENTS.AP_HDG_DEC);
+            SendGenericCommand(TOGGLE_EVENT.FD_ASCRJ_FCP_HDG_SEL_DEC);
         }
 
         public void ApAltSet(uint altitude)
@@ -215,11 +217,13 @@ namespace FlightDeck.SimConnectFSX
         public void ApAltInc()
         {
             SendCommand(EVENTS.AP_ALT_INC);
+            SendGenericCommand(TOGGLE_EVENT.FD_ASCRJ_FCP_ALT_SEL_INC);
         }
 
         public void ApAltDec()
         {
             SendCommand(EVENTS.AP_ALT_DEC);
+            SendGenericCommand(TOGGLE_EVENT.FD_ASCRJ_FCP_ALT_SEL_DEC);
         }
 
         public void ApVsSet(uint speed)
@@ -235,11 +239,13 @@ namespace FlightDeck.SimConnectFSX
         public void ApAirSpeedInc()
         {
             SendCommand(EVENTS.AP_AIRSPEED_INC);
+            SendGenericCommand(TOGGLE_EVENT.FD_ASCRJ_FCP_SPEED_SEL_INC);
         }
 
         public void ApAirSpeedDec()
         {
             SendCommand(EVENTS.AP_AIRSPEED_DEC);
+            SendGenericCommand(TOGGLE_EVENT.FD_ASCRJ_FCP_SPEED_SEL_DEC);
         }
 
         public void QNHSet(uint qnh)
@@ -274,7 +280,7 @@ namespace FlightDeck.SimConnectFSX
                 RecoverFromError(ex);
             }
         }
-
+        
         private void SendGenericCommand(TOGGLE_EVENT sendingEvent, uint dwData = 0)
         {
             if (sendingEvent == TOGGLE_EVENT.TOGGLE_PUSHBACK_STRAIGHT)
@@ -284,11 +290,11 @@ namespace FlightDeck.SimConnectFSX
                 return;
             }
 
-            if (sendingEvent == TOGGLE_EVENT.ATC)
-            {
-                System.Windows.Forms.SendKeys.Send("{SCROLLLOCK}"); // BUG NOT WORKING
-                return;
-            }
+            //if (sendingEvent == TOGGLE_EVENT.ATC)
+            //{
+            //    System.Windows.Forms.SendKeys.Send("{SCROLLLOCK}"); // BUG NOT WORKING
+            //    return;
+            //}
 
             try
             {
@@ -954,5 +960,11 @@ namespace FlightDeck.SimConnectFSX
         #endregion
     }
 
-
+    public static class EventExtensions
+    {
+        public static string EventToSimConnectEvent(this EVENTS input)
+        {
+            return input.ToString().Replace("MOBIFLIGHT_", "MobiFlight.").Replace("FD_", "MobiFlight.");
+        }
+    }
 }
