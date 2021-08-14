@@ -200,13 +200,13 @@ namespace FlightDeck.SimConnectFSX
         public void ApHdgInc()
         {
             SendCommand(EVENTS.AP_HDG_INC);
-            SendGenericCommand(TOGGLE_EVENT.FD_ASCRJ_FCP_HDG_SEL_INC);
+            SendGenericCommand(TOGGLE_EVENT.FLIGHTDECK_ASCRJ_FCP_HDG_SEL_INC);
         }
 
         public void ApHdgDec()
         {
             SendCommand(EVENTS.AP_HDG_DEC);
-            SendGenericCommand(TOGGLE_EVENT.FD_ASCRJ_FCP_HDG_SEL_DEC);
+            SendGenericCommand(TOGGLE_EVENT.FLIGHTDECK_ASCRJ_FCP_HDG_SEL_DEC);
         }
 
         public void ApAltSet(uint altitude)
@@ -217,13 +217,13 @@ namespace FlightDeck.SimConnectFSX
         public void ApAltInc()
         {
             SendCommand(EVENTS.AP_ALT_INC);
-            SendGenericCommand(TOGGLE_EVENT.FD_ASCRJ_FCP_ALT_SEL_INC);
+            SendGenericCommand(TOGGLE_EVENT.FLIGHTDECK_ASCRJ_FCP_ALT_SEL_INC);
         }
 
         public void ApAltDec()
         {
             SendCommand(EVENTS.AP_ALT_DEC);
-            SendGenericCommand(TOGGLE_EVENT.FD_ASCRJ_FCP_ALT_SEL_DEC);
+            SendGenericCommand(TOGGLE_EVENT.FLIGHTDECK_ASCRJ_FCP_ALT_SEL_DEC);
         }
 
         public void ApVsSet(uint speed)
@@ -239,13 +239,13 @@ namespace FlightDeck.SimConnectFSX
         public void ApAirSpeedInc()
         {
             SendCommand(EVENTS.AP_AIRSPEED_INC);
-            SendGenericCommand(TOGGLE_EVENT.FD_ASCRJ_FCP_SPEED_SEL_INC);
+            SendGenericCommand(TOGGLE_EVENT.FLIGHTDECK_ASCRJ_FCP_SPEED_SEL_INC);
         }
 
         public void ApAirSpeedDec()
         {
             SendCommand(EVENTS.AP_AIRSPEED_DEC);
-            SendGenericCommand(TOGGLE_EVENT.FD_ASCRJ_FCP_SPEED_SEL_DEC);
+            SendGenericCommand(TOGGLE_EVENT.FLIGHTDECK_ASCRJ_FCP_SPEED_SEL_DEC);
         }
 
         public void QNHSet(uint qnh)
