@@ -206,6 +206,15 @@ namespace FlightDeck.Logics.Actions
         {
             originalValue = (uint)(originalValue + 100 * sign);
             flightConnector.ApVsSet(originalValue.Value);
+
+            if (sign == 1)
+            {
+                flightConnector.ApVsInc();
+            }
+            else
+            {
+                flightConnector.ApVsDec();
+            }
         }
 
         private void ChangeAirSpeed(int sign)

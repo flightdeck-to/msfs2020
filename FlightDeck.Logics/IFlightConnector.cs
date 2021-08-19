@@ -19,6 +19,9 @@ namespace FlightDeck.Logics
         void ApFlcOn();
         void ApFlcOff();
 
+        void ApVsInc();
+        void ApVsDec();
+
         /// <param name="heading">In Degree</param>
         void ApHdgSet(uint heading);
         void ApHdgInc();

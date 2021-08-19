@@ -201,12 +201,14 @@ namespace FlightDeck.SimConnectFSX
         {
             SendCommand(EVENTS.AP_HDG_INC);
             SendGenericCommand(TOGGLE_EVENT.FLIGHTDECK_ASCRJ_FCP_HDG_SEL_INC);
+            SendGenericCommand(TOGGLE_EVENT.FLIGHTDECK_A320_Neo_FCU_HDG_INC);
         }
 
         public void ApHdgDec()
         {
             SendCommand(EVENTS.AP_HDG_DEC);
             SendGenericCommand(TOGGLE_EVENT.FLIGHTDECK_ASCRJ_FCP_HDG_SEL_DEC);
+            SendGenericCommand(TOGGLE_EVENT.FLIGHTDECK_A320_Neo_FCU_HDG_DEC);
         }
 
         public void ApAltSet(uint altitude)
@@ -218,17 +220,31 @@ namespace FlightDeck.SimConnectFSX
         {
             SendCommand(EVENTS.AP_ALT_INC);
             SendGenericCommand(TOGGLE_EVENT.FLIGHTDECK_ASCRJ_FCP_ALT_SEL_INC);
+            SendGenericCommand(TOGGLE_EVENT.FLIGHTDECK_A32NX_FCU_ALT_INC);
         }
 
         public void ApAltDec()
         {
             SendCommand(EVENTS.AP_ALT_DEC);
             SendGenericCommand(TOGGLE_EVENT.FLIGHTDECK_ASCRJ_FCP_ALT_SEL_DEC);
+            SendGenericCommand(TOGGLE_EVENT.FLIGHTDECK_A32NX_FCU_ALT_DEC);
         }
 
         public void ApVsSet(uint speed)
         {
             SendCommand(EVENTS.AP_VS_SET, speed);
+        }
+
+        public void ApVsInc()
+        {
+            SendGenericCommand(TOGGLE_EVENT.FLIGHTDECK_A32NX__FCU_VS_INC);
+            SendGenericCommand(TOGGLE_EVENT.FLIGHTDECK_ASCRJ_FCP_WHEEL_SEL_INC);
+        }
+
+        public void ApVsDec()
+        {
+            SendGenericCommand(TOGGLE_EVENT.FLIGHTDECK_A32NX__FCU_VS_DEC);
+            SendGenericCommand(TOGGLE_EVENT.FLIGHTDECK_ASCRJ_FCP_WHEEL_SEL_DEC);
         }
 
         public void ApAirSpeedSet(uint speed)
@@ -240,12 +256,14 @@ namespace FlightDeck.SimConnectFSX
         {
             SendCommand(EVENTS.AP_AIRSPEED_INC);
             SendGenericCommand(TOGGLE_EVENT.FLIGHTDECK_ASCRJ_FCP_SPEED_SEL_INC);
+            SendGenericCommand(TOGGLE_EVENT.FLIGHTDECK_A320_Neo_FCU_SPEED_INC);
         }
 
         public void ApAirSpeedDec()
         {
             SendCommand(EVENTS.AP_AIRSPEED_DEC);
             SendGenericCommand(TOGGLE_EVENT.FLIGHTDECK_ASCRJ_FCP_SPEED_SEL_DEC);
+            SendGenericCommand(TOGGLE_EVENT.FLIGHTDECK_A320_Neo_FCU_SPEED_DEC);
         }
 
         public void QNHSet(uint qnh)
