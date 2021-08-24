@@ -237,13 +237,13 @@ namespace FlightDeck.SimConnectFSX
 
         public void ApVsInc()
         {
-            SendGenericCommand(TOGGLE_EVENT.FLIGHTDECK_A32NX__FCU_VS_INC);
+            SendGenericCommand(TOGGLE_EVENT.FLIGHTDECK_A320_Neo_FCU_VS_INC);
             SendGenericCommand(TOGGLE_EVENT.FLIGHTDECK_ASCRJ_FCP_WHEEL_SEL_INC);
         }
 
         public void ApVsDec()
         {
-            SendGenericCommand(TOGGLE_EVENT.FLIGHTDECK_A32NX__FCU_VS_DEC);
+            SendGenericCommand(TOGGLE_EVENT.FLIGHTDECK_A320_Neo_FCU_VS_DEC);
             SendGenericCommand(TOGGLE_EVENT.FLIGHTDECK_ASCRJ_FCP_WHEEL_SEL_DEC);
         }
 
