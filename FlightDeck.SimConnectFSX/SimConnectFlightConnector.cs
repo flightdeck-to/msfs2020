@@ -201,14 +201,14 @@ namespace FlightDeck.SimConnectFSX
         {
             SendCommand(EVENTS.AP_HDG_INC);
             SendGenericCommand(TOGGLE_EVENT.FLIGHTDECK_ASCRJ_FCP_HDG_SEL_INC);
-            SendGenericCommand(TOGGLE_EVENT.FLIGHTDECK_A320_Neo_FCU_HDG_INC);
+            SendGenericCommand(TOGGLE_EVENT.FLIGHTDECK_A32NX_FCU_HDG_INC);
         }
 
         public void ApHdgDec()
         {
             SendCommand(EVENTS.AP_HDG_DEC);
             SendGenericCommand(TOGGLE_EVENT.FLIGHTDECK_ASCRJ_FCP_HDG_SEL_DEC);
-            SendGenericCommand(TOGGLE_EVENT.FLIGHTDECK_A320_Neo_FCU_HDG_DEC);
+            SendGenericCommand(TOGGLE_EVENT.FLIGHTDECK_A32NX_FCU_HDG_DEC);
         }
 
         public void ApAltSet(uint altitude)
@@ -237,13 +237,13 @@ namespace FlightDeck.SimConnectFSX
 
         public void ApVsInc()
         {
-            SendGenericCommand(TOGGLE_EVENT.FLIGHTDECK_A320_Neo_FCU_VS_INC);
+            SendGenericCommand(TOGGLE_EVENT.FLIGHTDECK_A32NX_FCU_VS_INC);
             SendGenericCommand(TOGGLE_EVENT.FLIGHTDECK_ASCRJ_FCP_WHEEL_SEL_INC);
         }
 
         public void ApVsDec()
         {
-            SendGenericCommand(TOGGLE_EVENT.FLIGHTDECK_A320_Neo_FCU_VS_DEC);
+            SendGenericCommand(TOGGLE_EVENT.FLIGHTDECK_A32NX_FCU_VS_DEC);
             SendGenericCommand(TOGGLE_EVENT.FLIGHTDECK_ASCRJ_FCP_WHEEL_SEL_DEC);
         }
 

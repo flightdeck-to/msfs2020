@@ -114,6 +114,14 @@ namespace FlightDeck.Logics.Actions
             switch (buttonType)
             {
                 case ValueChangeFunction.Heading:
+                    if (sign == 1)
+                    {
+                        flightConnector.ApHdgInc();
+                    }
+                    else
+                    {
+                        flightConnector.ApHdgDec();
+                    }
                     ChangeSphericalValue(sign, increment, null, (uint? value, Core.TOGGLE_EVENT? evt) => { flightConnector.ApHdgSet(value.Value); });
                     break;
 
